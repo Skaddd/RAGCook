@@ -57,8 +57,14 @@ def process_documents(html_folder: str, file_extension: str = "*.aspx"):
 
 if __name__ == "__main__":
 
+    from helpers import global_loading_configuration
+
+    config_dir = r"/home/mateo/projects/RAGCook/conf"
+
+    conf = global_loading_configuration(configuration_dir=config_dir)
+
     saving_dir = "./data"
     download_reciepes(
-        list_urls=[],
+        list_urls=conf["marmitton_urls"],
         saving_dir=saving_dir,
     )
