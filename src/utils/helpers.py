@@ -2,6 +2,11 @@ import yaml
 import os
 from glob import glob
 from typing import Dict, Union
+import logging
+import yaml.parser
+
+
+logger = logging.getLogger(__name__)
 
 
 def global_loading_configuration(
@@ -22,8 +27,13 @@ def global_loading_configuration(
 
     global_configuration = {}
     for config_file in glob(os.path.join(configuration_dir, "*.yml")):
+        try:
+            with open(config_file, "r") as config_yml:
+                global_configuration.update(yaml.safe_load(config_yml))
 
-        with open(config_file, "r") as config_yml:
-            global_configuration.update(yaml.safe_load(config_yml))
+        except yaml.parser.ParserError:
+            logger.warning(
+                f" Parsing error in the following file : {config_file}"
+            )
 
     return global_configuration

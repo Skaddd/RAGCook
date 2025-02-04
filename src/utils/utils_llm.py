@@ -51,6 +51,7 @@ def load_dense_embedding_model(
             api_key=embedding_config["api_key"],
         )
     except KeyError:
+        print("error")
         logger.info("Config file missing key parameters to load Embedding")
 
     return dense_embedding_model

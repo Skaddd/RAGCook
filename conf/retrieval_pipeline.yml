@@ -8,6 +8,10 @@ marmitton_urls : [
   "https://www.marmiton.org/recettes/recette_crumble-de-potimarron-au-fromage-fondu_55483.aspx",
   "https://www.marmiton.org/recettes/recette_apple-cobbler-usa_44051.aspx",
   "https://www.marmiton.org/recettes/recette_crumble-pepites-de-chocolat-a-la-banane_88433.aspx",
-  "https://www.marmiton.org/recettes/recette_aiguillettes-de-canard-a-l-orange_12738.aspx"
-
+  "https://www.marmiton.org/recettes/recette_aiguillettes-de-canard-a-l-orange_12738.aspx",
   ]
+
+saving_html_dir: "./data/RAW_HTML"
+
+vectorstore_persistant_path: "./data/VECTORSTORE"
+db_collection_name: "quick_recipe"

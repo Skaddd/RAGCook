@@ -3,6 +3,10 @@ from typing import List, Any
 import os
 from langchain_community.document_loaders import UnstructuredHTMLLoader
 from glob import glob
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 def save_html_file(
@@ -52,6 +56,9 @@ def process_documents(html_folder: str, file_extension: str = "*.aspx"):
         html_loader = UnstructuredHTMLLoader(html_file, mode="single")
         raw_documents.extend(html_loader.load())
 
+    logger.info(f"Number of chunks : {len(raw_documents)}")
+    print(f"Number of chunks : {len(raw_documents)}")
+
     return raw_documents
 
 
@@ -63,8 +70,7 @@ if __name__ == "__main__":
 
     conf = global_loading_configuration(configuration_dir=config_dir)
 
-    saving_dir = "./data"
     download_reciepes(
         list_urls=conf["marmitton_urls"],
-        saving_dir=saving_dir,
+        saving_dir=conf["saving_html_dir"],
     )
