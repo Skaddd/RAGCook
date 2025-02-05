@@ -13,7 +13,7 @@ marmitton_urls : [
 
 saving_html_dir: "./data/RAW_HTML"
 
-vectorstore_persistant_path: "./data/VECTORSTORE"
+persistent_dir_path: "./data/VECTORSTORE"
 db_collection_name: "quick_recipe"
 
 

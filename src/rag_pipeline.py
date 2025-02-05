@@ -1,10 +1,11 @@
-from langgraph.graph import StateGraph, MessagesState
-from langchain_core.messages import SystemMessage
-from vectorstore import load_vectorstore_as_retriever_tool
-from utils.utils_llm import load_dense_embedding_model, load_llm_model
 from typing import Dict, Union
+
+from langchain_core.messages import SystemMessage
+from langgraph.graph import END, START, MessagesState, StateGraph
 from langgraph.prebuilt import ToolNode, tools_condition
-from langgraph.graph import END, START
+
+from src.utils.utils_llm import load_dense_embedding_model, load_llm_model
+from src.vectorstore import load_vectorstore_as_retriever_tool
 
 
 class RAGCook:
@@ -14,7 +15,7 @@ class RAGCook:
         collection_name: str,
         retriever_name: str,
         retriever_description: str,
-        llm_models_config: Dict[str, Union[str, int]],
+        llm_config: Dict[str, Union[str, int]],
     ):
 
         self.persistant_db_directory = persistent_directory_path
@@ -26,12 +27,10 @@ class RAGCook:
             retriever_name=retriever_name,
             retriever_description=retriever_description,
             dense_embedding_model=load_dense_embedding_model(
-                embedding_config=llm_models_config["embedding_config"]
+                embedding_config=llm_config["embedding_config"]
             ),
         )
-        self.llm_model = load_llm_model(
-            llm_config=llm_models_config["chat_llm_config"]
-        )
+        self.llm_model = load_llm_model(llm_config=llm_config["chat_config"])
         self.model_tool = self.llm_model.bind_tools([self.retriever_tool])
 
         workflow = self._setup_workflow()
@@ -104,11 +103,11 @@ if __name__ == "__main__":
 
     conf = global_loading_configuration(configuration_dir=config_dir)
     rag_assistant = RAGCook(
-        persistent_directory_path=conf["vectorstore_persistant_path"],
+        persistent_directory_path=conf["persistent_dir_path"],
         collection_name=conf["db_collection_name"],
         retriever_name=conf["retriever_tool_name"],
         retriever_description=conf["retriever_tool_description"],
-        llm_models_config=conf,
+        llm_config=conf["llm_config"],
     )
     query = "Peut-tu me donner les étapes à suivre si je veux cuisiner des aiguillettes de canard"
 
@@ -118,12 +117,11 @@ if __name__ == "__main__":
             # ("user", "When was born Franklin Roosevelt?"),
         ]
     }
-    import pprint
+    # import pprint
+    # for msg in rag_assistant.graph.stream(inputs):
+    #     if msg.get("retrieve"):
+    #         print("USED TOOL")
+    # pprint.pprint(msg)
+    # pprint.pprint("\n---\n")
 
-    for output in rag_assistant.graph.stream(inputs):
-        print(output)
-        for key, value in output.items():
-            pprint.pprint(f"Output from node '{key}':")
-            pprint.pprint("---")
-            pprint.pprint(value, indent=2, width=80, depth=None)
-        pprint.pprint("\n---\n")
+    print(rag_assistant.graph.invoke(input=inputs))

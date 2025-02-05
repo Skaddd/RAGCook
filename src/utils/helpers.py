@@ -4,7 +4,10 @@ from glob import glob
 from typing import Dict, Union
 import logging
 import yaml.parser
+from pathlib import Path
 
+# could be a env variable later
+CONFIG_DIR = Path(__file__).parent.parent.parent / "conf"
 
 logger = logging.getLogger(__name__)
 
@@ -37,3 +40,9 @@ def global_loading_configuration(
             )
 
     return global_configuration
+
+
+def load_config():
+    """Loads global configuration."""
+    print(CONFIG_DIR)
+    return global_loading_configuration(CONFIG_DIR)
