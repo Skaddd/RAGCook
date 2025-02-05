@@ -3,10 +3,12 @@ import os
 from typing import List
 from uuid import uuid4
 
+from langchain.tools.retriever import create_retriever_tool
 from langchain_core.documents import Document
 from langchain_qdrant import QdrantVectorStore, RetrievalMode
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams
+from langchain_core.tools import Tool
 
 logger = logging.getLogger(__name__)
 
@@ -60,6 +62,36 @@ def generate_vectorstore(
     vectorstore.add_documents(documents=langchain_documents, ids=uuids)
 
     return vectorstore
+
+
+def load_vectorstore_as_retriever_tool(
+    persistent_directory_path: str,
+    collection_name: str,
+    retriever_name: str,
+    retriever_description: str,
+    dense_embedding_model,
+) -> Tool:
+    qdrant_client = QdrantClient(path=persistent_directory_path)
+
+    if not qdrant_client.collection_exists(collection_name=collection_name):
+        logger.warning(f"{collection_name} was not found")
+        raise Exception
+
+    vectorstore = QdrantVectorStore(
+        client=qdrant_client,
+        collection_name=collection_name,
+        retrieval_mode=RetrievalMode.DENSE,
+        embedding=dense_embedding_model,
+        vector_name="dense",
+    )
+
+    retriever_tool = create_retriever_tool(
+        retriever=vectorstore.as_retriever(),
+        name=retriever_name,
+        description=retriever_description,
+    )
+
+    return retriever_tool
 
 
 if __name__ == "__main__":

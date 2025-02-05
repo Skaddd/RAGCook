@@ -15,3 +15,7 @@ saving_html_dir: "./data/RAW_HTML"
 
 vectorstore_persistant_path: "./data/VECTORSTORE"
 db_collection_name: "quick_recipe"
+
+
+retriever_tool_name: "retrieve_recipes"
+retriever_tool_description: "Find the recipe information and description to help the user"

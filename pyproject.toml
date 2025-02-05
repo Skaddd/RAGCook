@@ -17,7 +17,8 @@ dependencies = [
     "langchain-community (>=0.3.16,<0.4.0)",
     "glob2 (>=0.7,<0.8)",
     "langchain-openai (>=0.3.3,<0.4.0)",
-    "langchain-qdrant (>=0.2.0,<0.3.0)"
+    "langchain-qdrant (>=0.2.0,<0.3.0)",
+    "langgraph (>=0.2.69,<0.3.0)"
 ]
 
 
