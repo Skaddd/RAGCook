@@ -1,15 +1,23 @@
-import yaml
+import hashlib
+import logging
 import os
 from glob import glob
-from typing import Dict, Union
-import logging
-import yaml.parser
 from pathlib import Path
+from typing import Dict, Union
+
+import yaml
+import yaml.parser
 
 # could be a env variable later
 CONFIG_DIR = Path(__file__).parent.parent.parent / "conf"
 
 logger = logging.getLogger(__name__)
+
+
+def generate_hash(text_content: str) -> str:
+    """Generate unique identifier from piece of text."""
+
+    return hashlib.sha256(text_content.encode()).hexdigest
 
 
 def global_loading_configuration(

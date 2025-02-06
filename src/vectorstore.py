@@ -1,7 +1,6 @@
 import logging
 import os
 from typing import List
-from uuid import uuid4
 
 from langchain.tools.retriever import create_retriever_tool
 from langchain_core.documents import Document
@@ -9,6 +8,8 @@ from langchain_core.tools import Tool
 from langchain_qdrant import QdrantVectorStore, RetrievalMode
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams
+
+from src.utils.helpers import generate_hash
 
 logger = logging.getLogger(__name__)
 
@@ -69,10 +70,13 @@ def generate_vectorstore(
         embedding=dense_embedding_model,
         vector_name="dense",
     )
-    # to change for something stochastic
-    uuids = [str(uuid4()) for _ in range(len(langchain_documents))]
+    # Having true unique ids allows qdrant to
+    # avoid creating duplicates when happening already existing point.
+    unique_ids = [
+        generate_hash(doc.page_content) for doc in langchain_documents
+    ]
 
-    vectorstore.add_documents(documents=langchain_documents, ids=uuids)
+    vectorstore.add_documents(documents=langchain_documents, ids=unique_ids)
 
     return vectorstore
 
