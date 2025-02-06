@@ -9,6 +9,13 @@ from src.vectorstore import load_vectorstore_as_retriever_tool
 
 
 class RAGCook:
+    """Generate a Simple Rag pipeline.
+
+    This class aims at producing a really simple RAG
+    pipeline using Langchain and langgraph implmentations
+    to build a simple workflow composed of a Retriever Tool.
+    """
+
     def __init__(
         self,
         persistent_directory_path: str,
@@ -17,6 +24,19 @@ class RAGCook:
         retriever_description: str,
         llm_config: Dict[str, Union[str, int]],
     ):
+        """Constructor of RAGCook.
+
+        Apart from instanciating attributes, this constructor
+        also instanticate the langgraph workflow graph.
+        Args:
+            persistent_directory_path (str): vectorstore path location.
+            collection_name (str): collection name associated to
+            the vectorstore.
+            retriever_name (str): Tool name for the retriever tool.
+            retriever_description (str): Description for the retriever tool.
+            llm_config (Dict[str, Union[str, int]]): Specific configuration for
+            the llm and embedding models.
+        """
 
         self.persistant_db_directory = persistent_directory_path
         self.collection_name = collection_name
@@ -37,6 +57,7 @@ class RAGCook:
         self.graph = workflow.compile()
 
     def _setup_workflow(self):
+        """Create Langgraph workflow."""
         workflow = StateGraph(MessagesState)
 
         workflow.add_node("retrieve_or_respond", self.retrieve_or_answer)
@@ -61,14 +82,13 @@ class RAGCook:
 
     def generate(self, state: MessagesState):
         """Generate answer."""
-        # Get generated ToolMessages
-        recent_tool_messages = []
+        last_tool_messages = []
         for message in reversed(state["messages"]):
             if message.type == "tool":
-                recent_tool_messages.append(message)
+                last_tool_messages.append(message)
             else:
                 break
-        tool_messages = recent_tool_messages[::-1]
+        tool_messages = last_tool_messages[::-1]
 
         # Format into prompt
         docs_content = "\n\n".join(doc.content for doc in tool_messages)

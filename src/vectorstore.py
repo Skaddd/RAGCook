@@ -19,6 +19,19 @@ def generate_vectorstore(
     langchain_documents: List[Document],
     dense_embedding_model,
 ) -> QdrantVectorStore:
+    """Generate Qdrant local vectorstore.
+
+    Args:
+        persistent_directory_path (str): persistent location
+        for db.
+        collection_name (str): collection name.
+        langchain_documents (List[Document]): list of langchain
+        documents to feed into the vectorstore.
+        dense_embedding_model (_type_): Dense embedding model.
+
+    Returns:
+        QdrantVectorStore: Vectorstore.
+    """
     if not os.path.exists(persistent_directory_path):
         os.mkdir(persistent_directory_path)
 
@@ -36,7 +49,7 @@ def generate_vectorstore(
             },
         )
     else:
-        print("collection already exists !")
+        logger.info("collection already exists !")
         logger.info(
             f" The following collection : {collection_name}"
             + "was found ! taking it back..."
@@ -44,7 +57,7 @@ def generate_vectorstore(
         num_points = qdrant_client.get_collection(
             collection_name=collection_name
         ).points_count
-        print(
+        logger.info(
             "Number of existing point within the vectorstore:"
             + f"{num_points}"
         )
@@ -71,6 +84,25 @@ def load_vectorstore_as_retriever_tool(
     retriever_description: str,
     dense_embedding_model,
 ) -> Tool:
+    """Transform vectorstore into retriever tool.
+
+    This function aims at transforming the vectorstore into
+    a Langchain Tool, which will make the retrieval proces
+    more efficient.
+    Args:
+        persistent_directory_path (str): persistent directory
+        collection_name (str): collection name
+        retriever_name (str): retriever name.
+        retriever_description (str): retriever description
+        used to give information about the retriever tool.
+        dense_embedding_model (_type_): Embedding model.
+
+    Raises:
+        Exception: Expected qdrant collection was not found.
+
+    Returns:
+        Tool: Retriever as a tool.
+    """
     qdrant_client = QdrantClient(path=persistent_directory_path)
 
     if not qdrant_client.collection_exists(collection_name=collection_name):
