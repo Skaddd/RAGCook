@@ -173,4 +173,4 @@ cython_debug/
 
 # for now remove aspx data
 *.aspx
-data/**/
+data/RAW_HTML/**
