@@ -18,10 +18,11 @@ async def lifespan(app: FastAPI):
 
     app.state.rag_assistant = RAGCook(
         persistent_directory_path=config["persistent_dir_path"],
-        collection_name=config["db_collection_name"],
+        collection_name=config["db_collection_name"] + "_openai",
         retriever_name=config["retriever_tool_name"],
         retriever_description=config["retriever_tool_description"],
         llm_config=config,
+        use_openai_api=config["use_openai_api"]
     )
     yield
     logger.info("Clearing RAG pipeline...")

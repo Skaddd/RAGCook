@@ -206,23 +206,3 @@ def process_documents(
     logger.info(f"Number of chunks : {len(processed_documents)}")
 
     return processed_documents
-
-
-if __name__ == "__main__":
-
-    from helpers import global_loading_configuration
-
-    config_dir = r"/home/mateo/projects/RAGCook/conf"
-
-    conf = global_loading_configuration(configuration_dir=config_dir)
-
-    # download_reciepes(
-    #     list_urls=conf["marmitton_urls"],
-    #     saving_dir=conf["saving_html_dir"],
-    # )
-    print(
-        process_documents(
-            html_folder=conf["saving_html_dir"],
-            llm_config=conf["llama_llm_config"],
-        )
-    )

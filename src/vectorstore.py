@@ -9,7 +9,10 @@ from langchain_qdrant import QdrantVectorStore, RetrievalMode
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams
 from src.utils.helpers import generate_hash
-from src.utils.utils_llm import llamacpp_load_embedding_model
+from src.utils.utils_llm import (
+    llamacpp_load_embedding_model,
+    openai_load_dense_embedding_model,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -148,11 +151,15 @@ if __name__ == "__main__":
 
     generate_vectorstore(
         persistent_directory_path=conf["persistent_dir_path"],
-        collection_name=conf["db_collection_name"],
+        collection_name=conf["db_collection_name"] + "_openai",
         dense_emb_model=llamacpp_load_embedding_model(
             embedding_config=conf["llama_embedding_config"]
         ),
+        # dense_emb_model=openai_load_dense_embedding_model(
+        #     embedding_config=conf["openai_embedding_config"]
+        # ),
         langchain_documents=process_documents(
             html_folder=conf["saving_html_dir"],
         ),
+        # size=3072,
     )

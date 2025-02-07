@@ -113,14 +113,3 @@ def openai_load_dense_embedding_model(
         logger.info("Config file missing key parameters to load Embedding")
 
     return dense_embedding_model
-
-
-if __name__ == "__main__":
-
-    from helpers import global_loading_configuration
-
-    config_dir = r"/home/mateo/projects/RAGCook/conf"
-
-    conf = global_loading_configuration(configuration_dir=config_dir)
-
-    llamacpp_load_embedding_model(conf["llama_embedding_config"])
