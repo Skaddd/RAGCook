@@ -21,7 +21,7 @@ async def lifespan(app: FastAPI):
         collection_name=config["db_collection_name"],
         retriever_name=config["retriever_tool_name"],
         retriever_description=config["retriever_tool_description"],
-        llm_config=config["llm_config"],
+        llm_config=config,
     )
     yield
     logger.info("Clearing RAG pipeline...")

@@ -4,7 +4,7 @@ import os
 from glob import glob
 from pathlib import Path
 from typing import Dict, Union
-
+from uuid import UUID
 import yaml
 import yaml.parser
 
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 def generate_hash(text_content: str) -> str:
     """Generate unique identifier from piece of text."""
 
-    return hashlib.sha256(text_content.encode()).hexdigest
+    return UUID(hex=hashlib.sha256(text_content.encode()).hexdigest()[:32])
 
 
 def global_loading_configuration(
@@ -52,5 +52,4 @@ def global_loading_configuration(
 
 def load_config():
     """Loads global configuration."""
-    print(CONFIG_DIR)
     return global_loading_configuration(CONFIG_DIR)

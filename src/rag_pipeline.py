@@ -4,7 +4,12 @@ from langchain_core.messages import SystemMessage
 from langgraph.graph import END, START, MessagesState, StateGraph
 from langgraph.prebuilt import ToolNode, tools_condition
 
-from src.utils.utils_llm import load_dense_embedding_model, load_llm_model
+from src.utils.utils_llm import (
+    openai_load_dense_embedding_model,
+    openai_load_llm_model,
+    llamacpp_load_embedding_model,
+    llamacpp_load_llm_model,
+)
 from src.vectorstore import load_vectorstore_as_retriever_tool
 
 
@@ -23,6 +28,7 @@ class RAGCook:
         retriever_name: str,
         retriever_description: str,
         llm_config: Dict[str, Union[str, int]],
+        use_openai_api: bool = False,
     ):
         """Constructor of RAGCook.
 
@@ -36,21 +42,34 @@ class RAGCook:
             retriever_description (str): Description for the retriever tool.
             llm_config (Dict[str, Union[str, int]]): Specific configuration for
             the llm and embedding models.
+            use_openai_api (bool): Whether to use openai apis.
         """
 
         self.persistant_db_directory = persistent_directory_path
         self.collection_name = collection_name
+
+        if not use_openai_api:
+            denser_embedder = llamacpp_load_embedding_model(
+                embedding_config=llm_config["llama_embedding_config"]
+            )
+            self.llm_model = llamacpp_load_llm_model(
+                llm_config=llm_config["llama_llm_config"]
+            )
+        else:
+            denser_embedder = openai_load_dense_embedding_model(
+                embedding_config=llm_config["openai_embedding_config"]
+            )
+            self.llm_model = openai_load_llm_model(
+                llm_config=llm_config["openai_llm_config"]
+            )
 
         self.retriever_tool = load_vectorstore_as_retriever_tool(
             persistent_directory_path=self.persistant_db_directory,
             collection_name=self.collection_name,
             retriever_name=retriever_name,
             retriever_description=retriever_description,
-            dense_embedding_model=load_dense_embedding_model(
-                embedding_config=llm_config["embedding_config"]
-            ),
+            dense_embedding_model=denser_embedder,
         )
-        self.llm_model = load_llm_model(llm_config=llm_config["chat_config"])
         self.model_tool = self.llm_model.bind_tools([self.retriever_tool])
 
         workflow = self._setup_workflow()
@@ -127,7 +146,7 @@ if __name__ == "__main__":
         collection_name=conf["db_collection_name"],
         retriever_name=conf["retriever_tool_name"],
         retriever_description=conf["retriever_tool_description"],
-        llm_config=conf["llm_config"],
+        llm_config=conf,
     )
     query = "Peut-tu me donner les étapes à suivre si je veux cuisiner des aiguillettes de canard"
 

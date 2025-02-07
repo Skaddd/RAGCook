@@ -8,8 +8,8 @@ from langchain_core.tools import Tool
 from langchain_qdrant import QdrantVectorStore, RetrievalMode
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams
-
 from src.utils.helpers import generate_hash
+from src.utils.utils_llm import llamacpp_load_embedding_model
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +18,8 @@ def generate_vectorstore(
     persistent_directory_path: str,
     collection_name: str,
     langchain_documents: List[Document],
-    dense_embedding_model,
+    dense_emb_model,
+    size: int = 384,
 ) -> QdrantVectorStore:
     """Generate Qdrant local vectorstore.
 
@@ -28,7 +29,7 @@ def generate_vectorstore(
         collection_name (str): collection name.
         langchain_documents (List[Document]): list of langchain
         documents to feed into the vectorstore.
-        dense_embedding_model (_type_): Dense embedding model.
+        dense_emb_model (_type_): Dense embedding model.
 
     Returns:
         QdrantVectorStore: Vectorstore.
@@ -46,7 +47,10 @@ def generate_vectorstore(
         qdrant_client.create_collection(
             collection_name=collection_name,
             vectors_config={
-                "dense": VectorParams(size=3072, distance=Distance.COSINE)
+                "dense": VectorParams(
+                    size=size,
+                    distance=Distance.COSINE,
+                )
             },
         )
     else:
@@ -67,13 +71,14 @@ def generate_vectorstore(
         client=qdrant_client,
         collection_name=collection_name,
         retrieval_mode=RetrievalMode.DENSE,
-        embedding=dense_embedding_model,
+        embedding=dense_emb_model,
         vector_name="dense",
     )
     # Having true unique ids allows qdrant to
     # avoid creating duplicates when happening already existing point.
+
     unique_ids = [
-        generate_hash(doc.page_content) for doc in langchain_documents
+        str(generate_hash(doc.page_content)) for doc in langchain_documents
     ]
 
     vectorstore.add_documents(documents=langchain_documents, ids=unique_ids)
@@ -99,7 +104,8 @@ def load_vectorstore_as_retriever_tool(
         retriever_name (str): retriever name.
         retriever_description (str): retriever description
         used to give information about the retriever tool.
-        dense_embedding_model (_type_): Embedding model.
+        dense_embedding_model (Embedding): Embedding model.
+        use_open_api (bool): Whether to use openai apis.
 
     Raises:
         Exception: Expected qdrant collection was not found.
@@ -107,6 +113,7 @@ def load_vectorstore_as_retriever_tool(
     Returns:
         Tool: Retriever as a tool.
     """
+
     qdrant_client = QdrantClient(path=persistent_directory_path)
 
     if not qdrant_client.collection_exists(collection_name=collection_name):
@@ -134,19 +141,18 @@ if __name__ == "__main__":
 
     from utils.document_processing import process_documents
     from utils.helpers import global_loading_configuration
-    from utils.utils_llm import load_dense_embedding_model
 
     config_dir = r"/home/mateo/projects/RAGCook/conf"
 
     conf = global_loading_configuration(configuration_dir=config_dir)
 
     generate_vectorstore(
-        persistent_directory_path=conf["vectorstore_persistant_path"],
+        persistent_directory_path=conf["persistent_dir_path"],
         collection_name=conf["db_collection_name"],
-        dense_embedding_model=load_dense_embedding_model(
-            embedding_config=conf["embedding_config"]
+        dense_emb_model=llamacpp_load_embedding_model(
+            embedding_config=conf["llama_embedding_config"]
         ),
         langchain_documents=process_documents(
-            html_folder=conf["saving_html_dir"]
+            html_folder=conf["saving_html_dir"],
         ),
     )
