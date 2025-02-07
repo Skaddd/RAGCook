@@ -169,3 +169,8 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+
+# for now remove aspx data
+*.aspx
+data/RAW_HTML/**

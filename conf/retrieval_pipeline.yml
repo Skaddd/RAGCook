@@ -1,0 +1,21 @@
+marmitton_urls : [
+  "https://www.marmiton.org/recettes/recette_accras-de-butternut_342606.aspx",
+  "https://www.marmiton.org/recettes/recette_papillote-de-saumon-a-la-mozzarella_23382.aspx",
+  "https://www.marmiton.org/recettes/recette_pate-a-crepes-au-lait-de-coco_69226.aspx",
+  "https://www.marmiton.org/recettes/recette_creme-de-sardine_18514.aspx",
+  "https://www.marmiton.org/recettes/recette_potee-au-choux-et-saucisse-de-morteaux_105755.aspx",
+  "https://www.marmiton.org/recettes/recette_pudding-aux-fruits-secs_21033.aspx",
+  "https://www.marmiton.org/recettes/recette_crumble-de-potimarron-au-fromage-fondu_55483.aspx",
+  "https://www.marmiton.org/recettes/recette_apple-cobbler-usa_44051.aspx",
+  "https://www.marmiton.org/recettes/recette_crumble-pepites-de-chocolat-a-la-banane_88433.aspx",
+  "https://www.marmiton.org/recettes/recette_aiguillettes-de-canard-a-l-orange_12738.aspx",
+  ]
+
+saving_html_dir: "./data/RAW_HTML"
+
+persistent_dir_path: "./data/VECTORSTORE"
+db_collection_name: "quick_recipe"
+
+
+retriever_tool_name: "retrieve_recipes"
+retriever_tool_description: "Find the recipe information and description to help the user"

@@ -1,0 +1,35 @@
+[project]
+name = "ragcook"
+version = "0.1.0"
+description = "Simple RAG pipeline to daft savourous recipies"
+authors = [
+    {name = "skaddd",email = "mateo.lebrun@telecomnancy.net"}
+]
+readme = "README.md"
+requires-python = "^3.11.10"
+
+[tool.poetry.dependencies]
+python = ">=3.11.10,<3.13"
+langchain = "^0.3.17"
+qdrant-client = "^1.13.2"
+requests = "^2.32.3"
+black = "^25.1.0"
+flake8 = "^7.1.1"
+unstructured = "^0.16.17"
+langchain-community = "^0.3.16"
+glob2 = "^0.7"
+langchain-openai = "^0.3.3"
+langchain-qdrant = "^0.2.0"
+langgraph = "^0.2.69"
+fastapi = "^0.115.8"
+sentence-transformers = "^3.4.1"
+langchain-huggingface = "^0.1.2"
+uvicorn = "^0.32.1"
+
+[tool.poetry.group.dev.dependencies]
+black= "^25.1.0"
+flake8= "^7.1.1"
+
+[build-system]
+requires = ["poetry-core>=2.0.1,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

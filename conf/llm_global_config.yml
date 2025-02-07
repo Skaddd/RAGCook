@@ -1,0 +1,27 @@
+openai_llm_config: {
+  model_name: "gpt-3.5-turbo-0125",
+  temperature: 0,
+  streaming: True,
+  api_key: "",
+
+}
+openai_embedding_config: {
+  model_name: "text-embedding-3-large",
+  api_key: "",
+
+}
+
+llama_llm_config : {
+  model_path: "/home/mateo/projects/RAGCook/weights/qwen2.5-1.5b-instruct-fp16.gguf",
+  temperature: 0.1,
+  max_tokens: 1024,
+  n_ctx: 8192,
+  top_p: 0.5
+  
+}
+
+llama_embedding_config : {
+  model_name: 'sentence-transformers/all-MiniLM-L6-v2'
+}
+
+use_openai_api : False
