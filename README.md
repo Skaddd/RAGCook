@@ -69,6 +69,8 @@ RAGCook/
 
 ## Openai compatbility
 
+To make it work with OpenAI api, one should modify the following file `conf/llm_global_config.yml` and modify the parameter `use_openai_api`to True.
+
 
 ## Possible Evolutions
 
